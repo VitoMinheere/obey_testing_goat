@@ -32,7 +32,7 @@ class LoginTest(FunctionalTest):
                 for i in reversed(range(max(1, count - 10), count + 1)):
                     print('getting msg', i)
                     _, lines, __ = inbox.retr(i)
-                    lines = [l.decode('utf8') for l in lines]
+                    lines = [line.decode('utf8') for line in lines]
                     if f'Subject: {subject}' in lines:
                         email_id = i
                         body = '\n'.join(lines)
@@ -42,7 +42,6 @@ class LoginTest(FunctionalTest):
             if email_id:
                 inbox.dele(email_id)
             inbox.quit()
-
 
     def test_can_get_email_link_to_log_in(self):
         # Edith goes to the awesome superlists site
@@ -85,4 +84,3 @@ class LoginTest(FunctionalTest):
 
         # She is logged out
         self.wait_to_be_logged_out(email=test_email)
-
