@@ -90,3 +90,15 @@ class ListModelTest(TestCase):
         Item.objects.create(list=list_, text='first item')
         Item.objects.create(list=list_, text='second item')
         self.assertEqual(list_.name, 'first item')
+
+    def test_list_can_be_shared_with(self):
+        user = User.objects.create()
+        list_ = List.objects.create()
+        list_.shared_with.add(user.email)
+        self.assertEquals(list_.shared_with.all()[0], user)
+
+    def test_sharee_can_view_shared_list(self):
+        shared_list = List.objects.create()
+        user = User.objects.create()
+        shared_list.shared_with.add(user.email)
+        self.assertEqual(user.shared_lists.all()[0], shared_list)

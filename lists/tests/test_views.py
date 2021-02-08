@@ -11,7 +11,7 @@ from lists.forms import (
     ExistingListItemForm, ItemForm,
 )
 from lists.models import Item, List
-from lists.views import new_list
+from lists.views import new_list, share_list
 
 User = get_user_model()
 
@@ -229,3 +229,24 @@ class NewListViewUnitTest(unittest.TestCase):
         mock_form.is_valid.return_value = False
         new_list(self.request)
         self.assertFalse(mock_form.save.called)
+
+
+class SharingListTest(TestCase):
+
+    def test_post_redirects_to_lists_page(self):
+        user = User.objects.create(email='a@b.com')
+        list_ = List.objects.create()
+        response = self.client.post(
+            f'/lists/{list_.id}/share/',
+            data={'sharee': 'a@b.com'}
+        )
+        self.assertRedirects(response, f'/lists/{list_.id}/')
+
+    def test_sharee_get_added_to_shared_list(self):
+        user = User.objects.create(email='a@b.com')
+        list_ = List.objects.create()
+        response = self.client.post(
+            f'/lists/{list_.id}/share/',
+            data={'sharee': user.email}
+        )
+        self.assertEquals(list_.shared_with.all()[0], user)

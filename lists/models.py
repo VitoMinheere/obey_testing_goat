@@ -5,6 +5,8 @@ from django.conf import settings
 
 class List(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
+    shared_with = models.ManyToManyField(settings.AUTH_USER_MODEL,
+                                         related_name='shared_lists')
 
     def get_absolute_url(self):
         return reverse('view_list', args=[self.id])
@@ -29,4 +31,4 @@ class Item(models.Model):
         unique_together = ('list', 'text')
 
     def __str__(self):
-        return self.text
+        return str(self.text)
